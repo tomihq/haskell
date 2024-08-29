@@ -1,3 +1,4 @@
+import Data.Char (toUpper)
 {-
 problema f (n: Z) : Z {
  requiere: {n = 1 ∨ n = 4 ∨ n=16}
@@ -142,5 +143,40 @@ quitarTodos e (x:xs)
 quitarTodosFilter :: (a -> Bool) -> [a] -> [a]
 quitarTodosFilter f = filter f
 
-filtrarPares :: (a-> Bool) -> [a] -> [a]
-filtrarPares f = filter f 
+{- Voy a usar mod y diferente. Tiene que ser comparable y ademas Integegral -}
+filtrarPares :: (Integral a, Eq a) => [a] -> [a]
+filtrarPares  = filter (\x -> mod x 2 /= 0)
+
+filtrarLargas :: [String] -> [String]
+filtrarLargas = filter(\x -> length x > 3) {-Es irreducible pues necesito si o si de aplicarle algo a x-}
+
+
+filtrarMayoresQueN :: (Eq a, Ord a) => a -> [a] -> [a]
+filtrarMayoresQueN n = filter(\x -> x > n)
+
+filtrarMayoresQueNF :: (Eq a, Ord a) => a -> [a] -> [a]
+filtrarMayoresQueNF n = filter((>n))
+
+doblarElementos :: (Num a) => [a] -> [a]
+doblarElementos = map(\x -> x * 2)
+
+doblarElementosF :: (Num a) => [a] -> [a]
+doblarElementosF = map(*2)
+
+todoAMayusculas :: [String] -> [String]
+todoAMayusculas = map(\x -> map (\y -> toUpper y) x) {-El primer map recorre las palabras, el segundo las letras-}
+
+todoAMayusculasF :: [String] -> [String]
+todoAMayusculasF = map (map toUpper)
+
+longitudes :: [String] -> [Int]
+longitudes = map length
+
+filtrarYDoblar :: [Int] -> [Int]
+filtrarYDoblar = doblarElementos . filtrarPares
+
+mayusculasYLongitud :: [String] -> [Int]
+mayusculasYLongitud = longitudes . todoAMayusculasF
+
+filtrarLargasYConvertir :: [String] -> [String]
+filtrarLargasYConvertir = todoAMayusculasF . filtrarLargas
