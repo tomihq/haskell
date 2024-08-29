@@ -142,3 +142,5 @@ quitarTodos e (x:xs)
 quitarTodosFilter :: (a -> Bool) -> [a] -> [a]
 quitarTodosFilter f = filter f
 
+filtrarPares :: (a-> Bool) -> [a] -> [a]
+filtrarPares f = filter f 
