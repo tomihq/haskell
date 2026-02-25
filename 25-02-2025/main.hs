@@ -83,9 +83,24 @@ replace = foldForm
 -- Pasa una formula x a forma normal negada si el booleano es True y pasa a la negacion de x a forma normal negada si el booleano es False.
 -- Si b = true entonces en el caso AND y OR dejamos los mismos constructores, pero tenemos que "emitir" si nos midieron NO FNN o FNN.
 fnn :: Form -> Bool -> Form
-fnn =   foldForm (\s b ->if b then Prop s else Neg (Prop s)) 
+fnn =   foldForm (\s b ->if b then Prop s else Neg (Prop s))
                  (\pr qr b -> if b then And (pr True)  (qr True) else Or  (pr False) (qr False))
                  (\pr qr b -> if b then Or  (pr True)  (qr True) else And (pr False) (qr False))
                  (\pr b -> pr (not b))
 
 
+foldu :: b -> (c -> b -> b) -> [b -> c] -> b
+foldu z f [] = z
+foldu z f (x:xs) = f (x (foldu z f xs)) (foldu z f xs)
+
+-- foldr :: (a -> b -> b) -> b -> [a] -> b
+-- foldr f z [] = z
+-- foldr f z (x:xs)  = f x (foldr f z xs)
+
+-- Escribir foldr con foldu.
+-- a de foldr = c de foldu -> foldr (c -> b -> b) -> b -> [? -> c]
+-- cambian los casos base de lugar, foldu lo tiene primero.
+-- lo que cambia es que foldr me manda una lista digamos, y yo a foldu le tengo que mandar una funcion con dos parametros que ignore la primera, y devuelva solo la lista que me manda foldr.
+
+foldrOwn :: (a -> b -> b) -> b -> [a] -> b
+foldrOwn f z l = foldu z f (map const l)
