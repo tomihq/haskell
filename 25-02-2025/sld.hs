@@ -9,15 +9,19 @@ type ClausulaObjetivo = [Literal]
 esVacia :: ClausulaObjetivo -> Bool
 esVacia = (\l -> length l == 0)
 
-resolvente :: ClausulaObjetivo -> ClausulaDeDefinicion -> Maybe ClausulaObjetivo
-resolvente (x : xs) (Def k childs) 
-    | x == k = Just (childs ++ xs)
-    | otherwise = Nothing  
+resolvente :: ClausulaObjetivo -> ClausulaDeDefinicion -> ClausulaObjetivo
+resolvente (x:xs) (Def k childs)
+    | x == k  = childs ++ xs
+    | otherwise = x:xs
+
+-- Nota: la resolución SLD se puede colgar por la propia naturaleza de que al hacer DFS puede caer en una situación ad-infinitum. Es un tradeoff entre correctitud y eficiencia. La resolución SLD es lineal, binaria, empezás con cláusula objetivo y tenés cláusulas de Horn.
 
 existeRefutacionSLD :: [ClausulaDeDefinicion] -> ClausulaObjetivo -> Bool
-existeRefutacionSLD clausulasDef obj 
-    | esVacia obj = True 
-    | otherwise = any (\clausula -> case resolvente obj clausula of 
-                            Nothing -> False 
-                            (Just newObj) -> existeRefutacionSLD clausulasDef newObj           
-                      ) clausulasDef
+existeRefutacionSLD defs obj
+  | esVacia obj = True
+  | otherwise =
+      any (\d ->
+            let newObj = resolvente obj d
+            in newObj /= obj &&
+               existeRefutacionSLD defs newObj
+          ) defs
